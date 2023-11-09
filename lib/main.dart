@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:attendance_app/AttendanceDataModel.dart';
+import 'package:attendance_app/add_record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,16 +40,31 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isDescending = true;
   bool isDuration = true;
   String timeText = "";
+  final ScrollController scrollController = ScrollController();
+  bool showEndListIndicator = false;
 
   @override
   void initState() {
     super.initState();
     loadSharedPrefData();
-    _fetchData();
+    fetchData();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        setState(() {
+          showEndListIndicator = true;
+        });
+      } else {
+        setState(() {
+          showEndListIndicator = false;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -83,8 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Expanded(
               child: ListView.builder(
-                  itemCount: attendanceData.length,
+                  controller: scrollController,
+                  itemCount: attendanceData.length + 1,
                   itemBuilder: (context, index) {
+                    if (index == attendanceData.length) {
+                      return Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(
+                            child: Text('You have reached the end of the list'),
+                          ),
+                      );
+                    }
+
                     final sortedData = isDescending
                         ? attendanceData
                         : attendanceData.reversed.toList();
@@ -121,16 +147,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           )),
                     );
                   })),
-          
         ]),
         floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() {});
-            },
-            child: Icon(Icons.add),
-            tooltip: 'Add record',
-          )
-        );
+          onPressed: () {
+            Navigator.push( 
+                        context, 
+                        MaterialPageRoute( 
+                            builder: (context) => 
+                                AddRecordPage())); 
+          },
+          child: Icon(Icons.add),
+          tooltip: 'Add record',
+        ));
   }
 
   Future<List<AttendanceDataModel>> readJsonData() async {
@@ -141,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return list.map((e) => AttendanceDataModel.fromJson(e)).toList();
   }
 
-  Future<void> _fetchData() async {
+  Future<void> fetchData() async {
     List<AttendanceDataModel> data = await readJsonData();
     setState(() {
       attendanceData =

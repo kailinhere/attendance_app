@@ -7,7 +7,7 @@ class AttendanceDataModel {
   String? dateStr;
   String? duration;
 
-  AttendanceDataModel({this.name, this.phone, this.date});
+  AttendanceDataModel({required this.name, required this.phone, required this.dateStr});
 
   AttendanceDataModel.fromJson(Map<String, dynamic> json)
   {
@@ -39,5 +39,13 @@ class AttendanceDataModel {
     } else {
       return "Date not available";
     }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user': name,
+      'phone': phone,
+      'check-in': dateStr,
+    };
   }
 }
