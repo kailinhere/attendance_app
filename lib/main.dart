@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:attendance_app/add_record.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -104,10 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) {
                     if (index == attendanceData.length) {
                       return Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Center(
-                            child: Text('You have reached the end of the list'),
-                          ),
+                        padding: EdgeInsets.all(16),
+                        child: Center(
+                          child: Text('You have reached the end of the list'),
+                        ),
                       );
                     }
 
@@ -150,11 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push( 
-                        context, 
-                        MaterialPageRoute( 
-                            builder: (context) => 
-                                AddRecordPage())); 
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AddRecordPage()));
           },
           child: Icon(Icons.add),
           tooltip: 'Add record',
@@ -162,11 +161,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<AttendanceDataModel>> readJsonData() async {
-    final jsondata =
-        await rootBundle.rootBundle.loadString('data/attendance_list.json');
-    final list = json.decode(jsondata) as List<dynamic>;
+    Directory directory = await getApplicationDocumentsDirectory();
+    File file = File('${directory.path}/attendance_list.json');
 
-    return list.map((e) => AttendanceDataModel.fromJson(e)).toList();
+    print('filepath: ' + file.toString());
+    List<AttendanceDataModel> existingData = [];
+
+    if (await file.exists()) {
+      String data = await file.readAsString();
+      Iterable decoded = json.decode(data);
+      existingData =
+          decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
+    }
+
+    return existingData;
   }
 
   Future<void> fetchData() async {

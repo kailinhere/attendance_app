@@ -26,6 +26,8 @@ class _AddRecordPageState extends State<AddRecordPage> {
   bool nameValidate = false;
   bool phoneValidate = false;
   String phoneErrText = "";
+  String directory =
+      "C:\\Users\\USER\\Desktop\\TARC\\AInternship\\vimigo\\attendance_app\\data";
 
   @override
   void initState() {
@@ -129,7 +131,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                     } else {
                       phoneValidate = false;
                     }
-                    
+
                     nameValidate == false && phoneValidate == false
                         ? writeJsonData()
                         : print('hello');
@@ -152,40 +154,106 @@ class _AddRecordPageState extends State<AddRecordPage> {
     });
   }
 
+  // Future<void> writeJsonData() async {
+  //   Directory directory = await getApplicationDocumentsDirectory();
+  //   File file = File(directory.path + '/attendance_list.json');
+  //   // File file = File('C:\\Users\\USER\\Desktop\\TARC\\AInternship\\vimigo\\attendance_app\\data\\attendance_list.json');
+
+  //   print('filepath: ' + file.toString());
+
+  //   final AttendanceDataModel newData = AttendanceDataModel(
+  //     name: nameController.text, // Replace with the value from your text field
+  //     phone:
+  //         phoneController.text, // Replace with the value from your text field
+  //     oriDate: getCurrentTime(),
+  //   );
+
+  //   print(newData);
+
+  //   List<AttendanceDataModel> existingData = [];
+
+  //   final jsondata =
+  //       await rootBundle.rootBundle.loadString('data/attendance_list.json');
+  //   final list = json.decode(jsondata) as List<dynamic>;
+
+  //   existingData.clear(); // Clear existing data before adding new data
+
+  //   existingData.addAll(list
+  //       .map((e) => AttendanceDataModel.fromJson(e))
+  //       .cast<AttendanceDataModel>());
+
+  //   print('existing data : ' + existingData.length.toString());
+  //   // if (await file.exists()) {
+  //   //   String data = await file.readAsString();
+  //   //   Iterable decoded = json.decode(data);
+  //   //   existingData =
+  //   //       decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
+  //   // }
+
+  //   existingData.add(newData);
+  //   print('new exist data : ' + existingData.length.toString());
+  //   if (!await file.exists()){
+  //     print('file not exist');
+  //   } else {
+  //     print('file exist');
+  //   }
+
+  //   List<Map<String, dynamic>> updatedData =
+  //       existingData.map((record) => record.toJson()).toList();
+
+  //   try {
+  //     print(updatedData);
+  //     await file.writeAsString(json.encode(updatedData));
+  //     print('helo');
+
+  //   } catch (e) {
+  //     print('Error writing to file: $e');
+  //   }
+  // }
+
   Future<void> writeJsonData() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    // File file = File('${directory.path}/attendance_list.json');
+    File file = File('${directory.path}/attendance_list.json');
+
+    print('filepath: ' + file.toString());
 
     final AttendanceDataModel newData = AttendanceDataModel(
-      name: nameController.text, // Replace with the value from your text field
-      phone:
-          phoneController.text, // Replace with the value from your text field
-      dateStr: getCurrentTime(),
+      name: nameController.text,
+      phone: phoneController.text,
+      oriDate: getCurrentTime(),
     );
 
     print(newData);
 
-    // List<AttendanceDataModel> existingData = [];
+    List<AttendanceDataModel> existingData = [];
 
-    // if (await file.exists()) {
-    //   String data = await file.readAsString();
-    //   Iterable decoded = json.decode(data);
-    //   existingData =
-    //       decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
-    // }
+    if (await file.exists()) {
+      String data = await file.readAsString();
+      Iterable decoded = json.decode(data);
+      existingData =
+          decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
+    }
 
-    // existingData.add(newData);
-    // List<Map<String, dynamic>> updatedData =
-    //     existingData.map((record) => record.toJson()).toList();
+    print('existing data : ' + existingData.length.toString());
 
-    // await file.writeAsString(json.encode(updatedData));
+    existingData.add(newData);
+    print('new exist data : ' + existingData.length.toString());
 
-    // print("walao");
+    List<Map<String, dynamic>> updatedData =
+        existingData.map((record) => record.toJson()).toList();
+
+    try {
+      print(updatedData);
+      await file.writeAsString(json.encode(updatedData));
+      print('File write successful');
+    } catch (e) {
+      print('Error writing to file: $e');
+    }
   }
 
   String getCurrentTime() {
     var now = DateTime.now();
     var formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
-    return formattedDate.toString();
+    return formattedDate;
   }
 }

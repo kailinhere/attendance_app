@@ -3,18 +3,20 @@ import 'package:intl/intl.dart';
 class AttendanceDataModel {
   String? name;
   String? phone;
+  String? oriDate;
   DateTime? date;
   String? dateStr;
   String? duration;
 
-  AttendanceDataModel({required this.name, required this.phone, required this.dateStr});
+
+  AttendanceDataModel({required this.name, required this.phone, required this.oriDate});
 
   AttendanceDataModel.fromJson(Map<String, dynamic> json)
   {
     name = json['user'];
     phone = json['phone'];
-    String oriDate = json['check-in'];
-    date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(oriDate);
+    oriDate = json['check-in'];
+    date = DateFormat("yyyy-MM-dd HH:mm:ss").parse(oriDate!);
     dateStr = DateFormat("dd MMM yyyy, h:mm a").format(date!);
     duration = getTimeDifference();    
   }
@@ -45,7 +47,7 @@ class AttendanceDataModel {
     return {
       'user': name,
       'phone': phone,
-      'check-in': dateStr,
+      'check-in': oriDate,
     };
   }
 }
