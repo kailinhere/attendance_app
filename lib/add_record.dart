@@ -26,8 +26,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
   bool nameValidate = false;
   bool phoneValidate = false;
   String phoneErrText = "";
-  String directory =
-      "C:\\Users\\USER\\Desktop\\TARC\\AInternship\\vimigo\\attendance_app\\data";
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -48,6 +47,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           title: Text(widget.title),
         ),
@@ -154,76 +154,15 @@ class _AddRecordPageState extends State<AddRecordPage> {
     });
   }
 
-  // Future<void> writeJsonData() async {
-  //   Directory directory = await getApplicationDocumentsDirectory();
-  //   File file = File(directory.path + '/attendance_list.json');
-  //   // File file = File('C:\\Users\\USER\\Desktop\\TARC\\AInternship\\vimigo\\attendance_app\\data\\attendance_list.json');
-
-  //   print('filepath: ' + file.toString());
-
-  //   final AttendanceDataModel newData = AttendanceDataModel(
-  //     name: nameController.text, // Replace with the value from your text field
-  //     phone:
-  //         phoneController.text, // Replace with the value from your text field
-  //     oriDate: getCurrentTime(),
-  //   );
-
-  //   print(newData);
-
-  //   List<AttendanceDataModel> existingData = [];
-
-  //   final jsondata =
-  //       await rootBundle.rootBundle.loadString('data/attendance_list.json');
-  //   final list = json.decode(jsondata) as List<dynamic>;
-
-  //   existingData.clear(); // Clear existing data before adding new data
-
-  //   existingData.addAll(list
-  //       .map((e) => AttendanceDataModel.fromJson(e))
-  //       .cast<AttendanceDataModel>());
-
-  //   print('existing data : ' + existingData.length.toString());
-  //   // if (await file.exists()) {
-  //   //   String data = await file.readAsString();
-  //   //   Iterable decoded = json.decode(data);
-  //   //   existingData =
-  //   //       decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
-  //   // }
-
-  //   existingData.add(newData);
-  //   print('new exist data : ' + existingData.length.toString());
-  //   if (!await file.exists()){
-  //     print('file not exist');
-  //   } else {
-  //     print('file exist');
-  //   }
-
-  //   List<Map<String, dynamic>> updatedData =
-  //       existingData.map((record) => record.toJson()).toList();
-
-  //   try {
-  //     print(updatedData);
-  //     await file.writeAsString(json.encode(updatedData));
-  //     print('helo');
-
-  //   } catch (e) {
-  //     print('Error writing to file: $e');
-  //   }
-  // }
-
   Future<void> writeJsonData() async {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File('${directory.path}/attendance_list.json');
-
-    print('filepath: ' + file.toString());
 
     final AttendanceDataModel newData = AttendanceDataModel(
       name: nameController.text,
       phone: phoneController.text,
       oriDate: getCurrentTime(),
     );
-
-    print(newData);
 
     List<AttendanceDataModel> existingData = [];
 
@@ -234,10 +173,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
           decoded.map((model) => AttendanceDataModel.fromJson(model)).toList();
     }
 
-    print('existing data : ' + existingData.length.toString());
-
     existingData.add(newData);
-    print('new exist data : ' + existingData.length.toString());
 
     List<Map<String, dynamic>> updatedData =
         existingData.map((record) => record.toJson()).toList();
@@ -245,9 +181,23 @@ class _AddRecordPageState extends State<AddRecordPage> {
     try {
       print(updatedData);
       await file.writeAsString(json.encode(updatedData));
-      print('File write successful');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Yay! Record added successfully'),
+          duration: Duration(seconds: 5), 
+        ),
+      );
+      nameController.clear();
+      phoneController.clear();
+
     } catch (e) {
       print('Error writing to file: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Oops! Record not added.'),
+          duration: Duration(seconds: 5), 
+        ),
+      );
     }
   }
 

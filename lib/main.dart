@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:attendance_app/add_record.dart';
+import 'package:attendance_app/view_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -39,11 +40,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<AttendanceDataModel> attendanceData = [];
+  List<AttendanceDataModel> backupData = [];
   bool isDescending = true;
   bool isDuration = true;
   String timeText = "";
   final ScrollController scrollController = ScrollController();
   bool showEndListIndicator = false;
+  TextEditingController searchController = TextEditingController();
+  bool searchNotEmpty = false;
 
   @override
   void initState() {
@@ -62,11 +66,14 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     });
+    searchController.addListener(searchListener);
   }
 
   @override
   void dispose() {
     scrollController.dispose();
+    searchController.removeListener(searchListener);
+    searchController.dispose();
     super.dispose();
   }
 
@@ -95,9 +102,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                   },
                   icon: Icon(isDuration
-                      ? Icons.access_time_filled
-                      : Icons.calendar_today))
+                      ? Icons.calendar_today
+                      : Icons.access_time_filled))
             ],
+          ),
+          TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: 'Enter keyword..',
+              // errorText: nameValidate ? 'Oops, you miss out here' : null,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Colors.red, width: 3)),
+              prefixIcon: Icon(Icons.search),
+              suffixIcon: searchNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchController.clear();
+                          searchNotEmpty = false;
+                          attendanceData = backupData;
+                        });
+                      },
+                    )
+                  : null,
+            ),
+            textInputAction: TextInputAction.done,
+            onChanged: searchList,
           ),
           Expanded(
               child: ListView.builder(
@@ -117,43 +151,55 @@ class _MyHomePageState extends State<MyHomePage> {
                         ? attendanceData
                         : attendanceData.reversed.toList();
 
-                    return Card(
-                      elevation: 5,
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 8, right: 8),
-                                child: Text(
-                                  sortedData[index].name.toString(),
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 8, right: 8),
-                                child: Text(sortedData[index].phone.toString()),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 8, right: 8),
-                                child: isDuration
-                                    ? Text(
-                                        sortedData[index].duration.toString())
-                                    : Text(
-                                        sortedData[index].dateStr.toString()),
-                              )
-                            ],
-                          )),
-                    );
+                    return GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewDetailsPage(data: sortedData[index]))),
+                        child: Card(
+                          elevation: 5,
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          child: Container(
+                              padding: EdgeInsets.all(8),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: Text(
+                                      sortedData[index].name.toString(),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: Text(
+                                        sortedData[index].phone.toString()),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: isDuration
+                                        ? Text(sortedData[index]
+                                            .duration
+                                            .toString())
+                                        : Text(sortedData[index]
+                                            .dateStr
+                                            .toString()),
+                                  )
+                                ],
+                              )),
+                        ));
                   })),
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddRecordPage()));
+                    MaterialPageRoute(builder: (context) => AddRecordPage()))
+                .then((value) {
+              fetchData();
+            });
           },
           child: Icon(Icons.add),
           tooltip: 'Add record',
@@ -183,6 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
       attendanceData =
           data.reversed.toList(); // Update the state with fetched data
     });
+    backupData = attendanceData;
   }
 
   void loadSharedPrefData() async {
@@ -205,5 +252,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print('isDescending stop: $isDescending');
     print('isDuration stop: $isDuration');
+  }
+
+  void searchListener() {
+    setState(() {
+      searchNotEmpty = searchController.text.isNotEmpty;
+    });
+  }
+
+  void searchList(String query) {
+    print('Search query: $query');
+    attendanceData = backupData;
+
+    if (query.isNotEmpty) {
+      final result = attendanceData.where((data) {
+        final name = data.name?.toLowerCase();
+        final phone = data.phone;
+        final date = data.dateStr?.toLowerCase();
+        final input = query.toLowerCase();
+
+        return name!.contains(input) ||
+            phone!.contains(input) ||
+            date!.contains(input);
+      }).toList();
+
+      setState(() => attendanceData = result);
+    }
   }
 }
