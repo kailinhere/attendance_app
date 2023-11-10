@@ -5,6 +5,7 @@ import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 // import 'package:share_plus/share_plus.dart';
@@ -29,33 +30,90 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
     data = widget.data;
 
     return Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
-            // title: Text(data.name.toString()),
-            ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 8, right: 8),
-                child: Text(data.name.toString()),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 8, right: 8),
-                child: Text(data.phone.toString()),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 8, right: 8),
-                child: Text(data.duration.toString()),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 8, right: 8),
-                child: Text(data.dateStr.toString()),
-              ),
-              IconButton(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: [
+            IconButton(
                   onPressed: () {
                     shareInfo();
                   },
                   icon: Icon(Icons.share))
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: 40,
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset('assets/paint.png', width: 180),
+                  Positioned(
+                      child: Text(
+                    data.name!.substring(0, 1).toUpperCase(),
+                    style: GoogleFonts.eduTasBeginner(
+                        fontSize: 50, fontWeight: FontWeight.bold),
+                  ))
+                ],
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(top: 40, bottom: 18, left: 30, right: 30),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(data.name.toString(),
+                      style: GoogleFonts.eduTasBeginner(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 45,
+                        letterSpacing: 2,
+                      )),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 20, bottom: 15),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Text('Phone No.: ' + data.phone.toString(),
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 21,
+                          letterSpacing: 1,
+                        ))),
+              ),
+              
+              Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Text('Date: ' + data.dateStr.toString(),
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 21,
+                          letterSpacing: 1,
+                        ))),
+              ),
+              Container(
+                padding: EdgeInsets.only(bottom: 15),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Text('- ' + data.duration.toString() + ' -',
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 21,
+                          letterSpacing: 1,
+                        ))),
+              ),
+              
             ],
           ),
         ));

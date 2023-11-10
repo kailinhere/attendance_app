@@ -5,6 +5,7 @@ import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,6 +21,7 @@ class AddRecordPage extends StatefulWidget {
 class _AddRecordPageState extends State<AddRecordPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  final nameFocus = FocusNode();
   final phoneFocus = FocusNode();
   bool nameNotEmpty = false;
   bool phoneNotEmpty = false;
@@ -27,6 +29,13 @@ class _AddRecordPageState extends State<AddRecordPage> {
   bool phoneValidate = false;
   String phoneErrText = "";
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Color lightGreen =
+      Color(int.parse("#03DAC5".substring(1, 7), radix: 16) + 0xFF000000);
+  Color lightPurple =
+      Color(int.parse("#BB86FC".substring(1, 7), radix: 16) + 0xFF000000);
+  Color lightBlue =
+      Color(int.parse("#3700b3".substring(1, 7), radix: 16) + 0xFF000000);
 
   @override
   void initState() {
@@ -48,96 +57,204 @@ class _AddRecordPageState extends State<AddRecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Text(widget.title),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
-        body: SingleChildScrollView(
+        body: SingleChildScrollView(          
           child: Column(children: [
-            TextField(
-              controller: nameController,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]+')),
-              ],
-              decoration: InputDecoration(
-                hintText: 'Your Name',
-                labelText: 'Name',
-                errorText: nameValidate ? 'Oops, you miss out here' : null,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.red, width: 3)),
-                prefixIcon: Icon(Icons.person),
-                suffixIcon: nameNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            nameController.clear();
-                            nameNotEmpty = false;
-                          });
-                        },
-                      )
-                    : null,
-              ),
-              keyboardType: TextInputType.name,
-              textInputAction: TextInputAction.next,
-              onEditingComplete: () =>
-                  FocusScope.of(context).requestFocus(phoneFocus),
+            SizedBox(
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    'ADD NEW RECORDS',
+                    style: GoogleFonts.eduTasBeginner(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+              height: 90,
             ),
-            SizedBox(height: 20),
-            TextField(
-              focusNode: phoneFocus,
-              controller: phoneController,
-              decoration: InputDecoration(
-                hintText: "Your Phone No. (eg. 0xxxxxxxxxx)",
-                labelText: 'Phone No.',
-                errorText: phoneValidate ? phoneErrText : null,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.red, width: 3)),
-                prefixIcon: Icon(Icons.phone),
-                suffixIcon: phoneNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            phoneController.clear();
-                            phoneNotEmpty = false;
-                          });
-                        },
-                      )
-                    : null,
+            Padding(
+              padding: EdgeInsets.only(right: 24, left: 24, top: 70),
+              child: TextField(
+                controller: nameController,
+                focusNode: nameFocus,
+                style: GoogleFonts.roboto(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  letterSpacing: 2,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Your Name',
+                  labelText: 'Name',
+                  labelStyle: GoogleFonts.roboto(
+                    color: nameFocus.hasFocus ? lightGreen : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    letterSpacing: 2,
+                  ),
+                  errorText: nameValidate ? 'Oops, you miss out here' : null,
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(width: 2, color: Colors.grey)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(color: lightGreen, width: 2)),
+                  prefixIcon: Icon(Icons.person),
+                  prefixIconColor: MaterialStateColor.resolveWith((states) =>
+                      states.contains(MaterialState.focused)
+                          ? lightGreen
+                          : Colors.grey),
+                  suffixIconColor: MaterialStateColor.resolveWith((states) =>
+                      states.contains(MaterialState.focused)
+                          ? lightGreen
+                          : Colors.grey),
+                  suffixIcon: nameNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              nameController.clear();
+                              nameNotEmpty = false;
+                            });
+                          },
+                        )
+                      : null,
+                ),
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () =>
+                    FocusScope.of(context).requestFocus(phoneFocus),
               ),
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.done,
-              maxLength: 11,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    nameController.text.isEmpty
-                        ? nameValidate = true
-                        : nameValidate = false;
-                    if (phoneController.text.isEmpty ||
-                        phoneController.text.length < 10) {
-                      phoneValidate = true;
-                      if (phoneController.text.isEmpty)
-                        phoneErrText = "Oops, you miss out here";
-                      else
-                        phoneErrText = "Invalid format (eg. 0xxxxxxxxxx)";
-                    } else {
-                      phoneValidate = false;
-                    }
+            Padding(
+                padding:
+                    EdgeInsets.only(right: 24, left: 24, bottom: 30, top: 30),
+                child: TextField(
+                  focusNode: phoneFocus,
+                  controller: phoneController,
+                  style: GoogleFonts.roboto(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                    letterSpacing: 1,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Your Phone No. (without '-')",
+                    labelText: 'Phone No.',
+                    labelStyle: GoogleFonts.roboto(
+                      color: phoneFocus.hasFocus ? lightGreen : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      letterSpacing: 2,
+                    ),
+                    errorText: phoneValidate ? phoneErrText : null,
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(width: 2, color: Colors.grey)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: lightGreen, width: 2)),
+                    prefixIcon: Icon(Icons.phone),
+                    prefixIconColor: MaterialStateColor.resolveWith((states) =>
+                        states.contains(MaterialState.focused)
+                            ? lightGreen
+                            : Colors.grey),
+                    suffixIconColor: MaterialStateColor.resolveWith((states) =>
+                        states.contains(MaterialState.focused)
+                            ? lightGreen
+                            : Colors.grey),
+                    suffixIcon: phoneNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                phoneController.clear();
+                                phoneNotEmpty = false;
+                              });
+                            },
+                          )
+                        : null,
+                  ),
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.done,
+                  maxLength: 11,
+                )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: lightPurple,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        nameController.text.isEmpty
+                            ? nameValidate = true
+                            : nameValidate = false;
+                        if (phoneController.text.isEmpty ||
+                            phoneController.text.length < 10) {
+                          phoneValidate = true;
+                          if (phoneController.text.isEmpty)
+                            phoneErrText = "Oops, you miss out here";
+                          else
+                            phoneErrText = "Invalid format (eg. 0xxxxxxxxxx)";
+                        } else {
+                          phoneValidate = false;
+                        }
 
-                    nameValidate == false && phoneValidate == false
-                        ? writeJsonData()
-                        : print('hello');
-                  });
-                },
-                child: Text('Submit'))
+                        nameValidate == false && phoneValidate == false
+                            ? writeJsonData()
+                            : print('hello');
+                      });
+                    },
+                    child: Text(
+                      'SUBMIT',
+                      style: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 1,
+                      ),
+                    )),
+                SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        nameController.clear();
+                        phoneController.clear();
+                      });
+                    },
+                    child: Text(
+                      'CLEAR',
+                      style: GoogleFonts.roboto(
+                        color: lightPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 1,
+                      ),
+                    ))
+              ],
+            ),
           ]),
         ));
   }
@@ -184,18 +301,17 @@ class _AddRecordPageState extends State<AddRecordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Yay! Record added successfully'),
-          duration: Duration(seconds: 5), 
+          duration: Duration(seconds: 5),
         ),
       );
       nameController.clear();
       phoneController.clear();
-
     } catch (e) {
       print('Error writing to file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Oops! Record not added.'),
-          duration: Duration(seconds: 5), 
+          duration: Duration(seconds: 5),
         ),
       );
     }
