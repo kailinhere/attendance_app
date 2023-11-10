@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' as rootBundle;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
+// import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -29,8 +30,8 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
 
     return Scaffold(
         appBar: AppBar(
-          // title: Text(data.name.toString()),
-        ),
+            // title: Text(data.name.toString()),
+            ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -50,15 +51,22 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
                 padding: EdgeInsets.only(left: 8, right: 8),
                 child: Text(data.dateStr.toString()),
               ),
-              IconButton(onPressed: (){shareInfo();}, icon: Icon(Icons.share))
+              IconButton(
+                  onPressed: () {
+                    shareInfo();
+                  },
+                  icon: Icon(Icons.share))
             ],
           ),
         ));
   }
 
-  void shareInfo() async {
-    String contactInfo = "Name: ${widget.data.name}\nPhone No.: ${widget.data.phone}";
+  void shareInfo() {
+    String contactInfo =
+        "Name: ${widget.data.name}\nPhone No.: ${widget.data.phone}";
 
-    await Share.share(contactInfo, subject: "Contact Information");
+    Share.share(contactInfo, subject: "Contact Information");
+    // Share.share('check out my website https://example.com',
+    //     subject: 'Look what I made!');
   }
 }
