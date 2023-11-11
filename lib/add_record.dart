@@ -60,7 +60,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: SingleChildScrollView(          
+        body: SingleChildScrollView(
           child: Column(children: [
             SizedBox(
               child: Align(
@@ -82,7 +82,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                 style: GoogleFonts.roboto(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
-                  fontSize: 18,
+                  fontSize: 17,
                   letterSpacing: 2,
                 ),
                 decoration: InputDecoration(
@@ -91,17 +91,25 @@ class _AddRecordPageState extends State<AddRecordPage> {
                   labelStyle: GoogleFonts.roboto(
                     color: nameFocus.hasFocus ? lightGreen : Colors.grey,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 17,
                     letterSpacing: 2,
                   ),
                   errorText: nameValidate ? 'Oops, you miss out here' : null,
+                  errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide:
+                          const BorderSide(width: 2, color: Colors.red)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(width: 2, color: Colors.grey)),
+                      borderSide:
+                          const BorderSide(width: 2, color: Colors.grey)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(color: lightGreen, width: 2)),
-                  prefixIcon: const Icon(Icons.person),
+                  prefixIcon: const Icon(
+                    Icons.person,
+                    size: 20,
+                  ),
                   prefixIconColor: MaterialStateColor.resolveWith((states) =>
                       states.contains(MaterialState.focused)
                           ? lightGreen
@@ -112,7 +120,10 @@ class _AddRecordPageState extends State<AddRecordPage> {
                           : Colors.grey),
                   suffixIcon: nameNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear),
+                          icon: const Icon(
+                            Icons.clear,
+                            size: 20,
+                          ),
                           onPressed: () {
                             setState(() {
                               nameController.clear();
@@ -129,15 +140,15 @@ class _AddRecordPageState extends State<AddRecordPage> {
               ),
             ),
             Padding(
-                padding:
-                    const EdgeInsets.only(right: 24, left: 24, bottom: 30, top: 30),
+                padding: const EdgeInsets.only(
+                    right: 24, left: 24, bottom: 30, top: 30),
                 child: TextField(
                   focusNode: phoneFocus,
                   controller: phoneController,
                   style: GoogleFonts.roboto(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                    fontSize: 17,
                     letterSpacing: 1,
                   ),
                   decoration: InputDecoration(
@@ -146,17 +157,21 @@ class _AddRecordPageState extends State<AddRecordPage> {
                     labelStyle: GoogleFonts.roboto(
                       color: phoneFocus.hasFocus ? lightGreen : Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 17,
                       letterSpacing: 2,
                     ),
                     errorText: phoneValidate ? phoneErrText : null,
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(width: 2, color: Colors.grey)),
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.grey)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: lightGreen, width: 2)),
-                    prefixIcon: const Icon(Icons.phone),
+                    prefixIcon: const Icon(
+                      Icons.phone,
+                      size: 20,
+                    ),
                     prefixIconColor: MaterialStateColor.resolveWith((states) =>
                         states.contains(MaterialState.focused)
                             ? lightGreen
@@ -167,7 +182,10 @@ class _AddRecordPageState extends State<AddRecordPage> {
                             : Colors.grey),
                     suffixIcon: phoneNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(
+                              Icons.clear,
+                              size: 20,
+                            ),
                             onPressed: () {
                               setState(() {
                                 phoneController.clear();
@@ -188,8 +206,8 @@ class _AddRecordPageState extends State<AddRecordPage> {
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: lightPurple,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 21, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -231,8 +249,8 @@ class _AddRecordPageState extends State<AddRecordPage> {
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
