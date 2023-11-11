@@ -1,16 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as rootBundle;
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:share/share.dart';
-// import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ViewDetailsPage extends StatefulWidget {
   final AttendanceDataModel data;
@@ -39,7 +30,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
                   onPressed: () {
                     shareInfo();
                   },
-                  icon: Icon(Icons.share))
+                  icon: const Icon(Icons.share))
           ],
         ),
         body: SingleChildScrollView(
@@ -47,7 +38,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Stack(
@@ -64,7 +55,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
               ),
               Container(
                 padding:
-                    EdgeInsets.only(top: 40, bottom: 18, left: 30, right: 30),
+                    const EdgeInsets.only(top: 40, bottom: 18, left: 30, right: 30),
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(data.name.toString(),
@@ -77,7 +68,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 20, bottom: 15),
+                padding: const EdgeInsets.only(top: 20, bottom: 15),
                 child: Align(
                     alignment: Alignment.center,
                     child: Text('Phone No.: ' + data.phone.toString(),
@@ -90,7 +81,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
               ),
               
               Padding(
-                padding: EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.only(bottom: 15),
                 child: Align(
                     alignment: Alignment.center,
                     child: Text('Date: ' + data.dateStr.toString(),
@@ -102,7 +93,7 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
                         ))),
               ),
               Container(
-                padding: EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.only(bottom: 15),
                 child: Align(
                     alignment: Alignment.center,
                     child: Text('- ' + data.duration.toString() + ' -',
@@ -124,7 +115,5 @@ class _ViewDetailsPageState extends State<ViewDetailsPage> {
         "Name: ${widget.data.name}\nPhone No.: ${widget.data.phone}";
 
     Share.share(contactInfo, subject: "Contact Information");
-    // Share.share('check out my website https://example.com',
-    //     subject: 'Look what I made!');
   }
 }

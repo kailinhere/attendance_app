@@ -1,13 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as rootBundle;
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AddRecordPage extends StatefulWidget {
@@ -77,7 +75,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
               height: 90,
             ),
             Padding(
-              padding: EdgeInsets.only(right: 24, left: 24, top: 70),
+              padding: const EdgeInsets.only(right: 24, left: 24, top: 70),
               child: TextField(
                 controller: nameController,
                 focusNode: nameFocus,
@@ -99,11 +97,11 @@ class _AddRecordPageState extends State<AddRecordPage> {
                   errorText: nameValidate ? 'Oops, you miss out here' : null,
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(width: 2, color: Colors.grey)),
+                      borderSide: const BorderSide(width: 2, color: Colors.grey)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(color: lightGreen, width: 2)),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                   prefixIconColor: MaterialStateColor.resolveWith((states) =>
                       states.contains(MaterialState.focused)
                           ? lightGreen
@@ -114,7 +112,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                           : Colors.grey),
                   suffixIcon: nameNotEmpty
                       ? IconButton(
-                          icon: Icon(Icons.clear),
+                          icon: const Icon(Icons.clear),
                           onPressed: () {
                             setState(() {
                               nameController.clear();
@@ -132,7 +130,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
             ),
             Padding(
                 padding:
-                    EdgeInsets.only(right: 24, left: 24, bottom: 30, top: 30),
+                    const EdgeInsets.only(right: 24, left: 24, bottom: 30, top: 30),
                 child: TextField(
                   focusNode: phoneFocus,
                   controller: phoneController,
@@ -154,11 +152,11 @@ class _AddRecordPageState extends State<AddRecordPage> {
                     errorText: phoneValidate ? phoneErrText : null,
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(width: 2, color: Colors.grey)),
+                        borderSide: const BorderSide(width: 2, color: Colors.grey)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: lightGreen, width: 2)),
-                    prefixIcon: Icon(Icons.phone),
+                    prefixIcon: const Icon(Icons.phone),
                     prefixIconColor: MaterialStateColor.resolveWith((states) =>
                         states.contains(MaterialState.focused)
                             ? lightGreen
@@ -169,7 +167,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                             : Colors.grey),
                     suffixIcon: phoneNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear),
+                            icon: const Icon(Icons.clear),
                             onPressed: () {
                               setState(() {
                                 phoneController.clear();
@@ -191,7 +189,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: lightPurple,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                          const EdgeInsets.symmetric(horizontal: 25, vertical: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -204,10 +202,11 @@ class _AddRecordPageState extends State<AddRecordPage> {
                         if (phoneController.text.isEmpty ||
                             phoneController.text.length < 10) {
                           phoneValidate = true;
-                          if (phoneController.text.isEmpty)
+                          if (phoneController.text.isEmpty) {
                             phoneErrText = "Oops, you miss out here";
-                          else
+                          } else {
                             phoneErrText = "Invalid format (eg. 0xxxxxxxxxx)";
+                          }
                         } else {
                           phoneValidate = false;
                         }
@@ -226,14 +225,14 @@ class _AddRecordPageState extends State<AddRecordPage> {
                         letterSpacing: 1,
                       ),
                     )),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 25, vertical: 18),
+                          const EdgeInsets.symmetric(horizontal: 25, vertical: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -299,7 +298,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
       print(updatedData);
       await file.writeAsString(json.encode(updatedData));
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Yay! Record added successfully'),
           duration: Duration(seconds: 5),
         ),
@@ -309,7 +308,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
     } catch (e) {
       print('Error writing to file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Oops! Record not added.'),
           duration: Duration(seconds: 5),
         ),

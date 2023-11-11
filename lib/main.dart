@@ -1,11 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:attendance_app/AttendanceDataModel.dart';
 import 'package:attendance_app/add_record.dart';
+import 'package:attendance_app/tutorial.dart';
 import 'package:attendance_app/view_details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,15 +20,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Attendance Records'),
-    );
+    return WillPopScope(
+        onWillPop: () async {
+          // Return false to prevent the page from being popped
+          return false;
+        },
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.blue,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: const MyHomePage(title: 'Attendance Records'),
+        ));
   }
 }
 
@@ -61,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    checkWhetherFirstTime();
     loadSharedPrefData();
     fetchData();
     scrollController.addListener(() {
@@ -89,225 +96,224 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
-        body: Column(children: [
-          SizedBox(
-            child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  'ATTENDANCE RECORDS',
-                  style: GoogleFonts.eduTasBeginner(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )),
-            height: 100,
-          ),
-          SizedBox(height: 30),
-          Padding(
-              padding: EdgeInsets.only(right: 18, left: 18, bottom: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextField(
-                    controller: searchController,
-                    style: GoogleFonts.roboto(
-                        color: Colors.white, fontSize: 18, letterSpacing: 2),
-                    decoration: InputDecoration(
-                      hintText: 'Enter keyword..',
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(width: 2, color: Colors.grey)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(color: lightGreen, width: 2)),
-                      prefixIcon: Icon(Icons.search),
-                      prefixIconColor: MaterialStateColor.resolveWith(
-                          (states) => states.contains(MaterialState.focused)
-                              ? lightGreen
-                              : Colors.grey),
-                      suffixIconColor: MaterialStateColor.resolveWith(
-                          (states) => states.contains(MaterialState.focused)
-                              ? lightGreen
-                              : Colors.grey),
-                      suffixIcon: searchNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.clear,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  searchController.clear();
-                                  searchNotEmpty = false;
-                                  attendanceData = backupData;
-                                });
-                              },
-                            )
-                          : null,
-                    ),
-                    textInputAction: TextInputAction.done,
-                    onChanged: searchList,
-                  )),
-                  IconButton(
-                      onPressed: () => setState(() {
-                            isDescending = !isDescending;
-                            saveSharedPrefData();
-                          }),
-                      icon: Icon(
-                          isDescending
-                              ? Icons.arrow_downward
-                              : Icons.arrow_upward,
-                          size: 28)),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isDuration = !isDuration;
-                          saveSharedPrefData();
-                        });
-                      },
-                      icon: Icon(
-                        isDuration
-                            ? Icons.calendar_today
-                            : Icons.access_time_filled,
-                        size: 24,
-                      ))
-                ],
+      backgroundColor: Colors.black,
+      body: Column(children: [
+        SizedBox(
+          child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                'ATTENDANCE RECORDS',
+                style: GoogleFonts.eduTasBeginner(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
               )),
-          Expanded(
-              child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: attendanceData.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == attendanceData.length) {
-                      return Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(
-                          child: Text('You have reached the end of the list'),
+          height: 100,
+        ),
+        const SizedBox(height: 30),
+        Padding(
+            padding: const EdgeInsets.only(right: 18, left: 18, bottom: 20),
+            child: Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                  controller: searchController,
+                  style: GoogleFonts.roboto(
+                      color: Colors.white, fontSize: 16, letterSpacing: 2),
+                  decoration: InputDecoration(
+                    hintText: 'Enter keyword..',
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(width: 2, color: Colors.grey)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(color: lightGreen, width: 2)),
+                    prefixIcon: const Icon(Icons.search),
+                    prefixIconColor: MaterialStateColor.resolveWith((states) =>
+                        states.contains(MaterialState.focused)
+                            ? lightGreen
+                            : Colors.grey),
+                    suffixIconColor: MaterialStateColor.resolveWith((states) =>
+                        states.contains(MaterialState.focused)
+                            ? lightGreen
+                            : Colors.grey),
+                    suffixIcon: searchNotEmpty
+                        ? IconButton(
+                            icon: const Icon(
+                              Icons.clear,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                searchController.clear();
+                                searchNotEmpty = false;
+                                attendanceData = backupData;
+                              });
+                            },
+                          )
+                        : null,
+                  ),
+                  textInputAction: TextInputAction.done,
+                  onChanged: searchList,
+                )),
+                IconButton(
+                    onPressed: () => setState(() {
+                          isDescending = !isDescending;
+                          saveSharedPrefData();
+                        }),
+                    icon: Icon(
+                        isDescending
+                            ? Icons.arrow_downward
+                            : Icons.arrow_upward,
+                        size: 28)),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isDuration = !isDuration;
+                        saveSharedPrefData();
+                      });
+                    },
+                    icon: Icon(
+                      isDuration
+                          ? Icons.calendar_today
+                          : Icons.access_time_filled,
+                      size: 24,
+                    ))
+              ],
+            )),
+        Expanded(
+            child: ListView.builder(
+                controller: scrollController,
+                itemCount: attendanceData.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == attendanceData.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: Text('You have reached the end of the list'),
+                      ),
+                    );
+                  }
+
+                  final sortedData = isDescending
+                      ? attendanceData
+                      : attendanceData.reversed.toList();
+
+                  return GestureDetector(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ViewDetailsPage(data: sortedData[index]))),
+                      child: Card(
+                        color: darkGrey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              15), // Adjust the radius as needed
                         ),
-                      );
-                    }
-
-                    final sortedData = isDescending
-                        ? attendanceData
-                        : attendanceData.reversed.toList();
-
-                    return GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewDetailsPage(data: sortedData[index]))),
-                        child: Card(
-                          color: darkGrey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                15), // Adjust the radius as needed
-                          ),
-                          elevation: 5,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 22),
-                              child: Row(
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Image.asset('assets/paint.png',
-                                          width: 85),
-                                      Positioned(
-                                          child: Text(
-                                        sortedData[index]
-                                            .name!
-                                            .substring(0, 1)
-                                            .toUpperCase(),
-                                        style: GoogleFonts.eduTasBeginner(
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.bold),
-                                      ))
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Expanded(
-                                      child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                          padding: EdgeInsets.only(bottom: 12),
-                                          child: Text(
-                                            sortedData[index].name.toString(),
-                                            style: GoogleFonts.roboto(
-                                                letterSpacing: 2,
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w500),
-                                            softWrap: true,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: null,
-                                          )),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(left: 8, bottom: 6),
+                        elevation: 5,
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 22),
+                            child: Row(
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Image.asset('assets/paint.png', width: 85),
+                                    Positioned(
                                         child: Text(
-                                          sortedData[index].phone.toString(),
+                                      sortedData[index]
+                                          .name!
+                                          .substring(0, 1)
+                                          .toUpperCase(),
+                                      style: GoogleFonts.eduTasBeginner(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold),
+                                    ))
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                        padding: const EdgeInsets.only(bottom: 12),
+                                        child: Text(
+                                          sortedData[index].name.toString(),
                                           style: GoogleFonts.roboto(
-                                            letterSpacing: 2,
-                                            fontSize: 16,
-                                          ),
+                                              letterSpacing: 2,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w500),
+                                          softWrap: true,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: null,
+                                        )),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 8, bottom: 6),
+                                      child: Text(
+                                        sortedData[index].phone.toString(),
+                                        style: GoogleFonts.roboto(
+                                          letterSpacing: 2,
+                                          fontSize: 16,
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 8),
-                                        child: isDuration
-                                            ? Text(
-                                                sortedData[index]
-                                                    .duration
-                                                    .toString(),
-                                                style: GoogleFonts.roboto(
-                                                  letterSpacing: 2,
-                                                  fontSize: 16,
-                                                ),
-                                              )
-                                            : Text(
-                                                sortedData[index]
-                                                    .dateStr
-                                                    .toString(),
-                                                style: GoogleFonts.roboto(
-                                                  letterSpacing: 2,
-                                                  fontSize: 16,
-                                                ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: isDuration
+                                          ? Text(
+                                              sortedData[index]
+                                                  .duration
+                                                  .toString(),
+                                              style: GoogleFonts.roboto(
+                                                letterSpacing: 2,
+                                                fontSize: 16,
                                               ),
-                                      )
-                                    ],
-                                  ))
-                                ],
-                              )),
-                        ));
-                  })),
-        ]),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: lightGreen,
-          elevation: 5,
-          onPressed: () {
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddRecordPage()))
-                .then((value) {
-              fetchData();
-            });
-          },
-          child: Text(
-            '+',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.w400,
-            ),
+                                            )
+                                          : Text(
+                                              sortedData[index]
+                                                  .dateStr
+                                                  .toString(),
+                                              style: GoogleFonts.roboto(
+                                                letterSpacing: 2,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                    )
+                                  ],
+                                ))
+                              ],
+                            )),
+                      ));
+                })),
+      ]),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: lightGreen,
+        elevation: 5,
+        onPressed: () {
+          Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => const AddRecordPage()))
+              .then((value) {
+            fetchData();
+          });
+        },
+        child: const Text(
+          '+',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
           ),
-          tooltip: 'Add record',
-        ));
+        ),
+        tooltip: 'Add record',
+      ),
+    );
   }
 
   Future<List<AttendanceDataModel>> readJsonData() async {
@@ -381,6 +387,16 @@ class _MyHomePageState extends State<MyHomePage> {
       }).toList();
 
       setState(() => attendanceData = result);
+    }
+  }
+
+  void checkWhetherFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool visited = prefs.containsKey('visited');
+
+    if (!visited) {
+      prefs.setBool('visited', true);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const Page1()));
     }
   }
 }
