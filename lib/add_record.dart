@@ -161,6 +161,10 @@ class _AddRecordPageState extends State<AddRecordPage> {
                       letterSpacing: 2,
                     ),
                     errorText: phoneValidate ? phoneErrText : null,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide:
+                          const BorderSide(width: 2, color: Colors.red)),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide:
