@@ -124,7 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     hintText: 'Enter keyword..',
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(width: 2, color: Colors.grey)),
+                        borderSide:
+                            const BorderSide(width: 2, color: Colors.grey)),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide(color: lightGreen, width: 2)),
@@ -185,113 +186,134 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: scrollController,
                 itemCount: attendanceData.length + 1,
                 itemBuilder: (context, index) {
-                  if (index == attendanceData.length) {
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: Text('You have reached the end of the list'),
+                  if (attendanceData.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No record',
+                        style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: 18,
+                            letterSpacing: 1.5),
                       ),
                     );
-                  }
-
-                  final sortedData = isDescending
-                      ? attendanceData
-                      : attendanceData.reversed.toList();
-
-                  return GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ViewDetailsPage(data: sortedData[index]))),
-                      child: Card(
-                        color: darkGrey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              15), // Adjust the radius as needed
+                  } else {
+                    if (index == attendanceData.length) {
+                      return Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(
+                          child: Text(
+                            'You have reached the end of the list',
+                            style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 16,
+                                letterSpacing: 1.5),
+                          ),
                         ),
-                        elevation: 5,
-                        margin:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 22),
-                            child: Row(
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset('assets/paint.png', width: 85),
-                                    Positioned(
+                      );
+                    }
+
+                    final sortedData = isDescending
+                        ? attendanceData
+                        : attendanceData.reversed.toList();
+
+                    return GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewDetailsPage(data: sortedData[index]))),
+                        child: Card(
+                          color: darkGrey,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                15), // Adjust the radius as needed
+                          ),
+                          elevation: 5,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 22),
+                              child: Row(
+                                children: [
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.asset('assets/paint.png',
+                                          width: 85),
+                                      Positioned(
+                                          child: Text(
+                                        sortedData[index]
+                                            .name!
+                                            .substring(0, 1)
+                                            .toUpperCase(),
+                                        style: GoogleFonts.eduTasBeginner(
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold),
+                                      ))
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                      child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 12),
+                                          child: Text(
+                                            sortedData[index].name.toString(),
+                                            style: GoogleFonts.roboto(
+                                                letterSpacing: 2,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w500),
+                                            softWrap: true,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: null,
+                                          )),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8, bottom: 6),
                                         child: Text(
-                                      sortedData[index]
-                                          .name!
-                                          .substring(0, 1)
-                                          .toUpperCase(),
-                                      style: GoogleFonts.eduTasBeginner(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.bold),
-                                    ))
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                    child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding: const EdgeInsets.only(bottom: 12),
-                                        child: Text(
-                                          sortedData[index].name.toString(),
+                                          sortedData[index].phone.toString(),
                                           style: GoogleFonts.roboto(
-                                              letterSpacing: 2,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w500),
-                                          softWrap: true,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: null,
-                                        )),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 8, bottom: 6),
-                                      child: Text(
-                                        sortedData[index].phone.toString(),
-                                        style: GoogleFonts.roboto(
-                                          letterSpacing: 2,
-                                          fontSize: 16,
+                                            letterSpacing: 2,
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: isDuration
-                                          ? Text(
-                                              sortedData[index]
-                                                  .duration
-                                                  .toString(),
-                                              style: GoogleFonts.roboto(
-                                                letterSpacing: 2,
-                                                fontSize: 16,
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: isDuration
+                                            ? Text(
+                                                sortedData[index]
+                                                    .duration
+                                                    .toString(),
+                                                style: GoogleFonts.roboto(
+                                                  letterSpacing: 2,
+                                                  fontSize: 16,
+                                                ),
+                                              )
+                                            : Text(
+                                                sortedData[index]
+                                                    .dateStr
+                                                    .toString(),
+                                                style: GoogleFonts.roboto(
+                                                  letterSpacing: 2,
+                                                  fontSize: 16,
+                                                ),
                                               ),
-                                            )
-                                          : Text(
-                                              sortedData[index]
-                                                  .dateStr
-                                                  .toString(),
-                                              style: GoogleFonts.roboto(
-                                                letterSpacing: 2,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                    )
-                                  ],
-                                ))
-                              ],
-                            )),
-                      ));
+                                      )
+                                    ],
+                                  ))
+                                ],
+                              )),
+                        ));
+                  }
                 })),
       ]),
       floatingActionButton: FloatingActionButton(
@@ -299,8 +321,9 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 5,
         onPressed: () {
           Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const AddRecordPage()))
-              .then((value) {
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const AddRecordPage())).then((value) {
             fetchData();
           });
         },
@@ -396,7 +419,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!visited) {
       prefs.setBool('visited', true);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const Page1()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Page1()));
     }
   }
 }

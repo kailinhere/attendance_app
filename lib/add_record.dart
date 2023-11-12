@@ -152,7 +152,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
                     letterSpacing: 1,
                   ),
                   decoration: InputDecoration(
-                    hintText: "Your Phone No. (without '-')",
+                    hintText: "Your Phone No. (without '-'&'6')",
                     labelText: 'Phone No.',
                     labelStyle: GoogleFonts.roboto(
                       color: phoneFocus.hasFocus ? lightGreen : Colors.grey,
